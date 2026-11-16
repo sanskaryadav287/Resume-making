@@ -1,0 +1,1839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sanskar Yadav | 3D Animated Interactive Data Science Resume</title>
+  <meta name="description" content="3D Animated Portfolio & Interactive Resume of Sanskar Yadav - Data Science Student, Python, Machine Learning & AWS Cloud Practitioner">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Three.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <style>
+    :root {
+      --bg-dark: #07090e;
+      --bg-card: rgba(15, 23, 42, 0.72);
+      --bg-card-hover: rgba(30, 41, 59, 0.88);
+      --border-glow: rgba(56, 189, 248, 0.38);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --cyan: #00f2fe;
+      --blue: #38bdf8;
+      --indigo: #6366f1;
+      --purple: #a855f7;
+      --emerald: #10b981;
+      --amber: #f59e0b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* 3D WEBGL BACKGROUND CANVAS */
+    #webgl-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* UI OVERLAY CONTAINER */
+    .app-container {
+      position: relative;
+      z-index: 10;
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 20px 20px 90px 20px;
+    }
+
+    /* FLOATING TOP NAVIGATION HUD */
+    .nav-hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px;
+      background: rgba(13, 19, 33, 0.78);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-glow);
+      border-radius: 999px;
+      box-shadow: 0 10px 30px -10px rgba(0, 242, 254, 0.25);
+      margin-bottom: 30px;
+      position: sticky;
+      top: 14px;
+      z-index: 100;
+      transition: all 0.3s ease;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+    .brand-thumb {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--cyan);
+      box-shadow: 0 0 12px rgba(0, 242, 254, 0.5);
+      transition: transform 0.3s ease;
+    }
+    .brand:hover .brand-thumb {
+      transform: scale(1.1) rotate(5deg);
+    }
+    .brand-text h1 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      background: linear-gradient(90deg, #fff, var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .brand-text span {
+      font-size: 0.72rem;
+      color: var(--cyan);
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-links a:hover {
+      color: var(--cyan);
+      text-shadow: 0 0 8px rgba(0, 242, 254, 0.6);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .hud-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 7px 14px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.25s ease;
+    }
+    .hud-btn:hover {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--cyan);
+      color: var(--cyan);
+      transform: translateY(-2px);
+    }
+    .hud-btn.active {
+      background: linear-gradient(135deg, rgba(0, 242, 254, 0.2), rgba(99, 102, 241, 0.2));
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+
+    /* HERO SECTION */
+    .hero {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 36px;
+      align-items: center;
+      padding: 20px 0 50px 0;
+    }
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #34d399;
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-bottom: 18px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    .hero-title {
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -1.5px;
+      margin-bottom: 14px;
+      background: linear-gradient(135deg, #ffffff 40%, var(--cyan) 80%, var(--indigo) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--blue);
+      margin-bottom: 16px;
+      letter-spacing: -0.2px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .hero-bio {
+      font-size: 1.02rem;
+      color: var(--text-muted);
+      margin-bottom: 26px;
+      max-width: 580px;
+    }
+    .hero-bio strong {
+      color: #fff;
+    }
+
+    /* CONTACT CHIPS */
+    .contact-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    .contact-chip {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 7px 14px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: all 0.25s ease;
+    }
+    .contact-chip i {
+      color: var(--cyan);
+    }
+    .contact-chip:hover {
+      background: rgba(56, 189, 248, 0.12);
+      border-color: var(--border-glow);
+      color: #fff;
+      transform: translateY(-2px);
+    }
+
+    /* BUTTONS */
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+    .btn-glow {
+      background: linear-gradient(135deg, var(--cyan), #2563eb);
+      color: #050b14;
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 12px 24px;
+      border-radius: 12px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 0 25px rgba(0, 242, 254, 0.4);
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-glow:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 0 35px rgba(0, 242, 254, 0.7);
+      color: #000;
+    }
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text-main);
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 12px 20px;
+      border-radius: 12px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(8px);
+    }
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--cyan);
+      color: var(--cyan);
+      transform: translateY(-3px);
+    }
+
+    /* =========================================================================
+       ANIMATED 3D PROFILE PHOTO & HOLOGRAM CARD
+       ========================================================================= */
+    .hero-hologram-card {
+      position: relative;
+      background: radial-gradient(circle at 50% 25%, rgba(56, 189, 248, 0.15), rgba(15, 23, 42, 0.9));
+      border: 1px solid var(--border-glow);
+      border-radius: 28px;
+      padding: 30px 24px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 35px rgba(56, 189, 248, 0.2);
+      backdrop-filter: blur(20px);
+      text-align: center;
+      overflow: hidden;
+      transform-style: preserve-3d;
+      transition: transform 0.2s ease-out;
+    }
+
+    /* Profile Avatar Container with 3D Cyber Ring & Scanline */
+    .avatar-wrapper {
+      position: relative;
+      width: 170px;
+      height: 170px;
+      margin: 0 auto 20px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: floatAvatar 4s ease-in-out infinite;
+    }
+    @keyframes floatAvatar {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+
+    /* Rotating Neon Border */
+    .avatar-ring {
+      position: absolute;
+      top: -6px;
+      left: -6px;
+      right: -6px;
+      bottom: -6px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, var(--cyan), var(--indigo), var(--purple), #fbbf24, var(--cyan));
+      animation: rotateRing 6s linear infinite;
+      z-index: 1;
+      filter: blur(2px);
+    }
+    @keyframes rotateRing {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .avatar-inner {
+      position: relative;
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      overflow: hidden;
+      z-index: 2;
+      background: #07090e;
+      border: 3px solid #07090e;
+      box-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+    }
+
+    .avatar-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+    .avatar-wrapper:hover .avatar-img {
+      transform: scale(1.08);
+    }
+
+    /* Scanning Holographic Beam */
+    .avatar-scanline {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 6px;
+      background: linear-gradient(90deg, transparent, rgba(0, 242, 254, 0.8), transparent);
+      box-shadow: 0 0 15px rgba(0, 242, 254, 0.9);
+      animation: scanBeam 3s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 3;
+    }
+    @keyframes scanBeam {
+      0% { top: 0%; opacity: 0; }
+      15% { opacity: 1; }
+      85% { opacity: 1; }
+      100% { top: 100%; opacity: 0; }
+    }
+
+    .hologram-badge {
+      position: relative;
+      z-index: 5;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(7, 9, 14, 0.85);
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.8px;
+      box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+
+    .holo-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 18px;
+      margin-top: 10px;
+    }
+    .stat-box {
+      text-align: center;
+    }
+    .stat-num {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #fff;
+      background: linear-gradient(135deg, #fff, var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .stat-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+
+    /* SECTION STYLES */
+    .section-wrap {
+      margin-bottom: 60px;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 26px;
+    }
+    .section-title {
+      font-size: 1.85rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .title-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid var(--border-glow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--cyan);
+      font-size: 1.2rem;
+    }
+    .section-tagline {
+      color: var(--text-dim);
+      font-size: 0.88rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* GRIDS */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 22px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .tilt-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 24px;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .tilt-card:hover {
+      border-color: var(--border-glow);
+      box-shadow: 0 15px 40px -10px rgba(0, 242, 254, 0.25);
+      background: var(--bg-card-hover);
+    }
+    .tilt-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .tilt-card:hover::before {
+      opacity: 1;
+    }
+
+    /* DATA SCIENCE SKILL CARDS & PROGRESS METERS */
+    .skill-card {
+      padding: 22px;
+      border-radius: 20px;
+    }
+    .skill-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .skill-head-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+    }
+    .skill-tags-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+    .skill-pill {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 5px 11px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #e2e8f0;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .skill-pill:hover {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--cyan);
+      color: #fff;
+      transform: scale(1.04);
+    }
+    .skill-pill.highlight {
+      background: rgba(0, 242, 254, 0.12);
+      border-color: rgba(0, 242, 254, 0.4);
+      color: var(--cyan);
+      font-weight: 600;
+    }
+
+    /* SKILL METERS BAR */
+    .metric-row {
+      margin-bottom: 12px;
+    }
+    .metric-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      margin-bottom: 5px;
+      color: #e2e8f0;
+      font-weight: 600;
+    }
+    .metric-bar-bg {
+      width: 100%;
+      height: 7px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .metric-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--cyan), var(--indigo));
+      box-shadow: 0 0 10px rgba(0, 242, 254, 0.6);
+      transition: width 1s ease;
+    }
+
+    /* AWS CLOUD SERVICES FOCUS CARDS */
+    .cloud-card {
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.8), rgba(10, 15, 28, 0.95));
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      border-radius: 20px;
+      padding: 22px;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    .cloud-card:hover {
+      border-color: #f59e0b;
+      box-shadow: 0 10px 30px -5px rgba(245, 158, 11, 0.3);
+      transform: translateY(-4px);
+    }
+    .cloud-badge-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fbbf24;
+      font-size: 1.3rem;
+      margin-bottom: 14px;
+    }
+    .cloud-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .cloud-role {
+      font-size: 0.78rem;
+      color: #f59e0b;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 10px;
+    }
+    .cloud-desc {
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* PROJECTS */
+    .project-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .proj-tag {
+      font-size: 0.74rem;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 3px 9px;
+      border-radius: 6px;
+      background: rgba(99, 102, 241, 0.15);
+      color: #818cf8;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+    .proj-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+    .proj-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+    .proj-tech-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: auto;
+      padding-top: 14px;
+      border-top: 1px solid var(--border-subtle);
+    }
+    .tech-mini-tag {
+      font-size: 0.74rem;
+      color: var(--cyan);
+      background: rgba(0, 242, 254, 0.08);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* TIMELINE */
+    .timeline {
+      position: relative;
+      padding-left: 28px;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background: linear-gradient(180deg, var(--cyan), var(--indigo), transparent);
+    }
+    .timeline-item {
+      position: relative;
+      margin-bottom: 24px;
+    }
+    .timeline-item:last-child {
+      margin-bottom: 0;
+    }
+    .timeline-dot {
+      position: absolute;
+      left: -28px;
+      top: 4px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--bg-dark);
+      border: 3px solid var(--cyan);
+      box-shadow: 0 0 10px var(--cyan);
+    }
+    .timeline-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 18px 22px;
+      backdrop-filter: blur(10px);
+      transition: all 0.25s ease;
+    }
+    .timeline-card:hover {
+      border-color: var(--border-glow);
+      transform: translateX(4px);
+    }
+    .timeline-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .timeline-role {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .timeline-time {
+      font-size: 0.78rem;
+      color: var(--cyan);
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(0, 242, 254, 0.1);
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+    .timeline-org {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #93c5fd;
+      margin-bottom: 8px;
+    }
+    .timeline-desc {
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* CERTIFICATIONS CARD */
+    .cert-badge-card {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(15, 23, 42, 0.9));
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 20px;
+      padding: 20px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      transition: all 0.3s ease;
+    }
+    .cert-badge-card:hover {
+      border-color: #34d399;
+      transform: translateY(-4px);
+      box-shadow: 0 10px 30px -5px rgba(16, 185, 129, 0.3);
+    }
+    .cert-icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #34d399;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    /* DOWNLOAD DOCK */
+    .download-dock {
+      position: fixed;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(10, 15, 26, 0.9);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-glow);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 242, 254, 0.25);
+      padding: 9px 18px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 1000;
+    }
+    .dock-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #fff;
+      padding-right: 8px;
+      border-right: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dock-btn {
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .dock-btn.pdf {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+    }
+    .dock-btn.pdf:hover {
+      background: #ef4444;
+      color: #fff;
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+      transform: translateY(-2px);
+    }
+    .dock-btn.docx {
+      background: rgba(37, 99, 235, 0.2);
+      border: 1px solid rgba(37, 99, 235, 0.4);
+      color: #93c5fd;
+    }
+    .dock-btn.docx:hover {
+      background: #2563eb;
+      color: #fff;
+      box-shadow: 0 0 15px rgba(37, 99, 235, 0.6);
+      transform: translateY(-2px);
+    }
+    .dock-btn.print {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      cursor: pointer;
+    }
+    .dock-btn.print:hover {
+      background: rgba(255, 255, 255, 0.18);
+      transform: translateY(-2px);
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding-top: 36px;
+      border-top: 1px solid var(--border-subtle);
+      color: var(--text-dim);
+      font-size: 0.85rem;
+    }
+    footer a {
+      color: var(--cyan);
+      text-decoration: none;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 992px) {
+      .hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+      .status-pill {
+        margin: 0 auto 18px auto;
+      }
+      .hero-subtitle {
+        justify-content: center;
+      }
+      .hero-bio {
+        margin: 0 auto 24px auto;
+      }
+      .contact-grid {
+        justify-content: center;
+      }
+      .cta-row {
+        justify-content: center;
+      }
+      .grid-2, .grid-3, .grid-4 {
+        grid-template-columns: 1fr;
+      }
+      .nav-links {
+        display: none;
+      }
+      .download-dock {
+        width: 92%;
+        justify-content: center;
+        flex-wrap: wrap;
+        bottom: 12px;
+        border-radius: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- THREE.JS 3D BACKGROUND CANVAS -->
+  <canvas id="webgl-canvas"></canvas>
+
+  <div class="app-container">
+
+    <!-- FLOATING HUD NAVIGATION -->
+    <header class="nav-hud">
+      <a href="#hero" class="brand" onclick="playAudioTone(520)">
+        <img src="profile_pic.jpeg" alt="Sanskar Yadav" class="brand-thumb">
+        <div class="brand-text">
+          <h1>SANSKAR YADAV</h1>
+          <span>DATA_SCIENCE // MACHINE_LEARNING</span>
+        </div>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#about" onclick="playAudioTone(440)"><i class="fas fa-user-astronaut"></i> Profile</a></li>
+        <li><a href="#skills" onclick="playAudioTone(460)"><i class="fas fa-brain"></i> Data Science Skills</a></li>
+        <li><a href="#aws" onclick="playAudioTone(480)"><i class="fab fa-aws"></i> AWS Cloud</a></li>
+        <li><a href="#projects" onclick="playAudioTone(500)"><i class="fas fa-layer-group"></i> Projects</a></li>
+        <li><a href="#experience" onclick="playAudioTone(520)"><i class="fas fa-briefcase"></i> Experience</a></li>
+        <li><a href="#education" onclick="playAudioTone(540)"><i class="fas fa-graduation-cap"></i> Education</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button id="sound-btn" class="hud-btn active" onclick="toggleAudio()" title="Toggle Sci-Fi Audio FX">
+          <i class="fas fa-volume-up"></i> Sound FX: ON
+        </button>
+        <button id="camera-btn" class="hud-btn" onclick="toggle3DOrbit()" title="Toggle Camera Rotation">
+          <i class="fas fa-cube"></i> 3D Mode
+        </button>
+      </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section id="hero" class="hero">
+      <div class="hero-left">
+        <div class="status-pill">
+          <span class="pulse-dot"></span>
+          <span>OPEN TO DATA SCIENCE &amp; ML INTERNSHIPS</span>
+        </div>
+
+        <h1 class="hero-title">SANSKAR YADAV</h1>
+
+        <div class="hero-subtitle">
+          <span>DATA SCIENCE SPECIALIST</span>
+          <span>•</span>
+          <span style="color: var(--cyan);">PYTHON &amp; ML</span>
+          <span>•</span>
+          <span style="color: #fbbf24;">AWS CLOUD</span>
+        </div>
+
+        <p class="hero-bio">
+          Synthesizing <strong>empirical scientific rigor</strong> from a Chemistry background with 
+          <strong>Machine Learning, Deep Learning foundations, MongoDB NoSQL modeling,</strong> and 
+          <strong>AWS Cloud Infrastructure</strong> to build predictive pipelines and unlock insights from high-dimensional data.
+        </p>
+
+        <!-- UPDATED CONTACT & SOCIAL CHIPS -->
+        <div class="contact-grid">
+          <span class="contact-chip">
+            <i class="fas fa-map-marker-alt"></i> Noida, Sector 49, UP
+          </span>
+          <a href="tel:+917906997240" class="contact-chip" onclick="playAudioTone(600)">
+            <i class="fas fa-phone-alt"></i> +91 7906997240
+          </a>
+          <a href="mailto:sanskaryadav287@gmail.com" class="contact-chip" onclick="playAudioTone(650)">
+            <i class="fas fa-envelope"></i> sanskaryadav287@gmail.com
+          </a>
+          <!-- UPDATED LINKEDIN LINK -->
+          <a href="https://www.linkedin.com/in/sanskar-yadav-a1546538a/" target="_blank" class="contact-chip" onclick="playAudioTone(700)">
+            <i class="fab fa-linkedin" style="color: #38bdf8;"></i> LinkedIn Profile
+          </a>
+          <!-- UPDATED GITHUB LINK -->
+          <a href="https://github.com/sanskaryadav287" target="_blank" class="contact-chip" onclick="playAudioTone(750)">
+            <i class="fab fa-github" style="color: #c084fc;"></i> GitHub /sanskaryadav287
+          </a>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="cta-row">
+          <a href="#projects" class="btn-glow" onclick="playAudioTone(880)">
+            <i class="fas fa-rocket"></i> Explore Data Projects
+          </a>
+          <a href="Sanskar_Yadav_Resume.pdf" download="Sanskar_Yadav_Resume.pdf" class="btn-outline" onclick="playAudioTone(720)">
+            <i class="fas fa-file-pdf" style="color: #ef4444;"></i> Get PDF Resume
+          </a>
+          <a href="Sanskar_Yadav_Resume.docx" download="Sanskar_Yadav_Resume.docx" class="btn-outline" onclick="playAudioTone(740)">
+            <i class="fas fa-file-word" style="color: #3b82f6;"></i> Get Word Document
+          </a>
+        </div>
+      </div>
+
+      <!-- 3D ANIMATED PROFILE AVATAR CARD -->
+      <div class="hero-right">
+        <div class="hero-hologram-card" id="tilt-hero">
+          <span class="hologram-badge">CYBERNETIC DATA PROFILE</span>
+
+          <!-- Animated Photo Wrapper with Glowing Neon Ring & Scanner Beam -->
+          <div class="avatar-wrapper">
+            <div class="avatar-ring"></div>
+            <div class="avatar-inner">
+              <img src="profile_pic.jpeg" alt="Sanskar Yadav" class="avatar-img">
+              <div class="avatar-scanline"></div>
+            </div>
+          </div>
+
+          <h3 style="font-size: 1.35rem; font-weight: 800; color: #fff; margin-bottom: 2px;">Sanskar Yadav</h3>
+          <p style="font-size: 0.85rem; color: var(--cyan); font-family: 'JetBrains Mono', monospace; margin-bottom: 14px;">
+            B.Sc. Data Science · AAFT College Noida
+          </p>
+
+          <!-- Quick Metrics Bar inside Avatar Card -->
+          <div style="background: rgba(0, 0, 0, 0.35); border-radius: 12px; padding: 10px 14px; margin-bottom: 14px; text-align: left;">
+            <div class="metric-row">
+              <div class="metric-label-row">
+                <span>Python &amp; ML Modeling</span>
+                <span style="color: var(--cyan);">92%</span>
+              </div>
+              <div class="metric-bar-bg"><div class="metric-bar-fill" style="width: 92%;"></div></div>
+            </div>
+            <div class="metric-row" style="margin-bottom: 0;">
+              <div class="metric-label-row">
+                <span>AWS Cloud &amp; MongoDB</span>
+                <span style="color: #fbbf24;">88%</span>
+              </div>
+              <div class="metric-bar-bg"><div class="metric-bar-fill" style="width: 88%; background: linear-gradient(90deg, #f59e0b, var(--cyan));"></div></div>
+            </div>
+          </div>
+
+          <div class="holo-stats">
+            <div class="stat-box">
+              <div class="stat-num">3+</div>
+              <div class="stat-label">Years Tutoring</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-num">4</div>
+              <div class="stat-label">AWS Services</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-num">2</div>
+              <div class="stat-label">MongoDB Badges</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPANDED DATA SCIENCE SKILLS SECTION -->
+    <section id="skills" class="section-wrap">
+      <div class="section-header">
+        <h2 class="section-title">
+          <div class="title-icon"><i class="fas fa-brain"></i></div>
+          Comprehensive Data Science &amp; Technical Skills
+        </h2>
+        <span class="section-tagline">// DATA_SCIENCE_STACK</span>
+      </div>
+
+      <div class="grid-3">
+        <!-- 1. Machine Learning & Algorithms -->
+        <div class="tilt-card skill-card">
+          <div class="skill-head">
+            <div class="skill-head-icon" style="background: rgba(0, 242, 254, 0.15); color: var(--cyan);"><i class="fas fa-cogs"></i></div>
+            <h3 style="font-size: 1.15rem; font-weight: 700;">Machine Learning &amp; AI</h3>
+          </div>
+          <div class="skill-tags-cloud">
+            <span class="skill-pill highlight"><i class="fab fa-python"></i> Scikit-Learn</span>
+            <span class="skill-pill highlight">Random Forests</span>
+            <span class="skill-pill highlight">XGBoost &amp; LightGBM</span>
+            <span class="skill-pill">Linear &amp; Logistic Reg.</span>
+            <span class="skill-pill">Decision Trees</span>
+            <span class="skill-pill">Support Vector Machines (SVM)</span>
+            <span class="skill-pill">K-Means Clustering</span>
+            <span class="skill-pill">PCA (Dimensionality Reduction)</span>
+            <span class="skill-pill">ANN / Neural Networks</span>
+            <span class="skill-pill">Hyperparameter Tuning (GridSearch)</span>
+            <span class="skill-pill">Model Metrics (ROC-AUC, F1)</span>
+          </div>
+        </div>
+
+        <!-- 2. Data Engineering & Python Tools -->
+        <div class="tilt-card skill-card">
+          <div class="skill-head">
+            <div class="skill-head-icon" style="background: rgba(99, 102, 241, 0.15); color: #818cf8;"><i class="fas fa-chart-line"></i></div>
+            <h3 style="font-size: 1.15rem; font-weight: 700;">Data Wrangling &amp; Analytics</h3>
+          </div>
+          <div class="skill-tags-cloud">
+            <span class="skill-pill highlight"><i class="fab fa-python"></i> Pandas</span>
+            <span class="skill-pill highlight">NumPy</span>
+            <span class="skill-pill highlight">Exploratory Data Analysis</span>
+            <span class="skill-pill">Feature Engineering</span>
+            <span class="skill-pill">Missing Value Imputation</span>
+            <span class="skill-pill">Outlier Detection</span>
+            <span class="skill-pill">SMOTE (Class Imbalance)</span>
+            <span class="skill-pill">Matplotlib &amp; Seaborn</span>
+            <span class="skill-pill">Plotly (Interactive Visuals)</span>
+            <span class="skill-pill">Power BI (Dashboards)</span>
+            <span class="skill-pill">Streamlit (ML Apps)</span>
+          </div>
+        </div>
+
+        <!-- 3. Math, Statistics & NLP -->
+        <div class="tilt-card skill-card">
+          <div class="skill-head">
+            <div class="skill-head-icon" style="background: rgba(168, 85, 247, 0.15); color: #c084fc;"><i class="fas fa-calculator"></i></div>
+            <h3 style="font-size: 1.15rem; font-weight: 700;">Math, Statistics &amp; NLP</h3>
+          </div>
+          <div class="skill-tags-cloud">
+            <span class="skill-pill highlight">Hypothesis Testing</span>
+            <span class="skill-pill highlight">p-values &amp; t-tests</span>
+            <span class="skill-pill">ANOVA &amp; Chi-Square</span>
+            <span class="skill-pill">Probability Distributions</span>
+            <span class="skill-pill">Central Limit Theorem</span>
+            <span class="skill-pill">A/B Testing</span>
+            <span class="skill-pill">Linear Algebra for ML</span>
+            <span class="skill-pill highlight">NLP: TF-IDF Vectorization</span>
+            <span class="skill-pill">Word2Vec &amp; Sentiment Analysis</span>
+            <span class="skill-pill">Prompt Engineering &amp; LLMs</span>
+          </div>
+        </div>
+
+        <!-- 4. Databases & NoSQL Architecture -->
+        <div class="tilt-card skill-card">
+          <div class="skill-head">
+            <div class="skill-head-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981;"><i class="fas fa-database"></i></div>
+            <h3 style="font-size: 1.15rem; font-weight: 700;">Database Systems</h3>
+          </div>
+          <div class="skill-tags-cloud">
+            <span class="skill-pill highlight"><i class="fas fa-leaf"></i> MongoDB (Certified)</span>
+            <span class="skill-pill highlight">Document Modeling</span>
+            <span class="skill-pill highlight">Schema Design Patterns</span>
+            <span class="skill-pill">Aggregation Pipelines</span>
+            <span class="skill-pill">PyMongo Driver</span>
+            <span class="skill-pill">SQL &amp; Relational Databases</span>
+            <span class="skill-pill">MySQL &amp; PostgreSQL</span>
+            <span class="skill-pill">Relational-to-Document Migration</span>
+            <span class="skill-pill">Indexing &amp; Optimization</span>
+          </div>
+        </div>
+
+        <!-- 5. AWS Cloud Architecture -->
+        <div class="tilt-card skill-card">
+          <div class="skill-head">
+            <div class="skill-head-icon" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;"><i class="fab fa-aws"></i></div>
+            <h3 style="font-size: 1.15rem; font-weight: 700;">AWS Cloud Infrastructure</h3>
+          </div>
+          <div class="skill-tags-cloud">
+            <span class="skill-pill highlight">Amazon EC2 (Compute)</span>
+            <span class="skill-pill highlight">Amazon S3 (Data Lake)</span>
+            <span class="skill-pill highlight">AWS IAM (Access &amp; Security)</span>
+            <span class="skill-pill highlight">Amazon VPC (Networking)</span>
+            <span class="skill-pill">Security Groups &amp; Subnets</span>
+            <span class="skill-pill">Cloud Cron Pipelines</span>
+            <span class="skill-pill">Model Artifact Storage</span>
+          </div>
+        </div>
+
+        <!-- 6. Developer Tools & Scientific Rigor -->
+        <div class="tilt-card skill-card">
+          <div class="skill-head">
+            <div class="skill-head-icon" style="background: rgba(56, 189, 248, 0.15); color: var(--cyan);"><i class="fas fa-vial"></i></div>
+            <h3 style="font-size: 1.15rem; font-weight: 700;">Tools &amp; Scientific Rigor</h3>
+          </div>
+          <div class="skill-tags-cloud">
+            <span class="skill-pill highlight"><i class="fab fa-git-alt"></i> Git &amp; GitHub</span>
+            <span class="skill-pill highlight">Docker (Basics)</span>
+            <span class="skill-pill">Jupyter Notebook</span>
+            <span class="skill-pill">Google Colab</span>
+            <span class="skill-pill">VS Code</span>
+            <span class="skill-pill">Linux / Bash CLI</span>
+            <span class="skill-pill">Empirical Experimental Design</span>
+            <span class="skill-pill">Quantitative Problem Solving</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AWS CLOUD SECTION -->
+    <section id="aws" class="section-wrap">
+      <div class="section-header">
+        <h2 class="section-title">
+          <div class="title-icon" style="color: #fbbf24; border-color: rgba(245, 158, 11, 0.4);"><i class="fab fa-aws"></i></div>
+          AWS Cloud Architecture &amp; Core Services
+        </h2>
+        <span class="section-tagline">// CLOUD_SERVICES</span>
+      </div>
+
+      <div class="grid-4">
+        <!-- EC2 -->
+        <div class="cloud-card">
+          <div class="cloud-badge-icon"><i class="fas fa-server"></i></div>
+          <h3 class="cloud-name">Amazon EC2</h3>
+          <div class="cloud-role">ELASTIC COMPUTE CLOUD</div>
+          <p class="cloud-desc">
+            Configured and deployed scalable Linux virtual server instances. Managed SSH key-pairs, system security groups, and automated scheduled Python ETL tasks.
+          </p>
+        </div>
+
+        <!-- S3 -->
+        <div class="cloud-card">
+          <div class="cloud-badge-icon"><i class="fas fa-database"></i></div>
+          <h3 class="cloud-name">Amazon S3</h3>
+          <div class="cloud-role">SIMPLE STORAGE SERVICE</div>
+          <p class="cloud-desc">
+            Architected durable object storage buckets for raw datasets, serialized machine learning models, lifecycle transitions, and static web asset distribution.
+          </p>
+        </div>
+
+        <!-- IAM -->
+        <div class="cloud-card">
+          <div class="cloud-badge-icon"><i class="fas fa-shield-alt"></i></div>
+          <h3 class="cloud-name">AWS IAM</h3>
+          <div class="cloud-role">IDENTITY &amp; ACCESS MGMT</div>
+          <p class="cloud-desc">
+            Enforced strict principle of least-privilege access, configuring custom IAM roles, policy definitions, and access credentials for secure cloud operations.
+          </p>
+        </div>
+
+        <!-- VPC -->
+        <div class="cloud-card">
+          <div class="cloud-badge-icon"><i class="fas fa-network-wired"></i></div>
+          <h3 class="cloud-name">Amazon VPC</h3>
+          <div class="cloud-role">VIRTUAL PRIVATE CLOUD</div>
+          <p class="cloud-desc">
+            Designed custom isolated virtual cloud networks with public/private subnets, Internet Gateways, custom route tables, and multi-tier security group rules.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS SECTION -->
+    <section id="projects" class="section-wrap">
+      <div class="section-header">
+        <h2 class="section-title">
+          <div class="title-icon"><i class="fas fa-project-diagram"></i></div>
+          Featured Practical Projects
+        </h2>
+        <span class="section-tagline">// APPLIED_PORTFOLIO</span>
+      </div>
+
+      <div class="grid-3">
+        <!-- Project 1 -->
+        <div class="tilt-card project-card">
+          <div>
+            <span class="proj-tag">MACHINE LEARNING</span>
+            <h3 class="proj-title">Customer Churn ML Classification Pipeline</h3>
+            <p class="proj-desc">
+              Developed an end-to-end ML classification pipeline predicting user churn across 10k+ customer accounts. Handled severe class imbalance using SMOTE and achieved <strong>87% ROC-AUC accuracy</strong> with Random Forest and XGBoost. Automated cloud model artifact backup on Amazon S3.
+            </p>
+          </div>
+          <div class="proj-tech-row">
+            <span class="tech-mini-tag">Python</span>
+            <span class="tech-mini-tag">Scikit-Learn</span>
+            <span class="tech-mini-tag">Pandas</span>
+            <span class="tech-mini-tag">AWS S3</span>
+          </div>
+        </div>
+
+        <!-- Project 2 -->
+        <div class="tilt-card project-card">
+          <div>
+            <span class="proj-tag" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.3);">NOSQL ARCHITECTURE</span>
+            <h3 class="proj-title">Healthcare Record NoSQL Document System</h3>
+            <p class="proj-desc">
+              Designed a performant MongoDB document model for healthcare patient records applying official Schema Design Patterns (Subset &amp; Extended Reference). Migrated legacy SQL relational schema to eliminate multi-table join bottlenecks and constructed high-throughput aggregation pipelines.
+            </p>
+          </div>
+          <div class="proj-tech-row">
+            <span class="tech-mini-tag">MongoDB</span>
+            <span class="tech-mini-tag">PyMongo</span>
+            <span class="tech-mini-tag">Schema Patterns</span>
+            <span class="tech-mini-tag">Aggregation</span>
+          </div>
+        </div>
+
+        <!-- Project 3 -->
+        <div class="tilt-card project-card">
+          <div>
+            <span class="proj-tag" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; border-color: rgba(245, 158, 11, 0.3);">AWS CLOUD AUTOMATION</span>
+            <h3 class="proj-title">Automated Cloud Data Infrastructure</h3>
+            <p class="proj-desc">
+              Architected a customized Amazon VPC network complete with public and private subnets, security groups, and route tables. Deployed an Amazon EC2 Linux instance running cron-based automated data scraping, cleaning, and scheduled sync to Amazon S3 secured via IAM roles.
+            </p>
+          </div>
+          <div class="proj-tech-row">
+            <span class="tech-mini-tag">Amazon EC2</span>
+            <span class="tech-mini-tag">Amazon S3</span>
+            <span class="tech-mini-tag">AWS IAM</span>
+            <span class="tech-mini-tag">Amazon VPC</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE & CERTIFICATIONS (2 COLUMNS) -->
+    <div class="grid-2 section-wrap">
+
+      <!-- EXPERIENCE -->
+      <section id="experience">
+        <div class="section-header">
+          <h2 class="section-title">
+            <div class="title-icon"><i class="fas fa-briefcase"></i></div>
+            Work Experience
+          </h2>
+        </div>
+
+        <div class="timeline">
+          <!-- Swasthi Health -->
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-card">
+              <div class="timeline-meta">
+                <span class="timeline-role">Sales Executive</span>
+                <span class="timeline-time">6 MONTHS</span>
+              </div>
+              <div class="timeline-org">Swasthi Health Company</div>
+              <p class="timeline-desc">
+                Spearheaded client outreach and lead acquisition in healthcare products. Analyzed customer feedback and sales transaction datasets to pinpoint high-converting buyer demographics. Streamlined CRM processes to improve client response speed by 25%.
+              </p>
+            </div>
+          </div>
+
+          <!-- Private Tutor -->
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-card">
+              <div class="timeline-meta">
+                <span class="timeline-role">Private STEM &amp; Academic Tutor</span>
+                <span class="timeline-time">3 YEARS</span>
+              </div>
+              <div class="timeline-org">Self-Employed · Noida &amp; Bareilly</div>
+              <p class="timeline-desc">
+                Mentored 50+ students in Mathematics, Science, and Analytical Logic. Formulated quantitative progress metrics and structured diagnostic quizzes, lifting average test scores by 20%. Mastered communication, mentoring, and complex concept deconstruction.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CERTIFICATIONS & BADGES -->
+      <section id="certifications">
+        <div class="section-header">
+          <h2 class="section-title">
+            <div class="title-icon" style="color: #34d399; border-color: rgba(16, 185, 129, 0.4);"><i class="fas fa-certificate"></i></div>
+            Official Certifications
+          </h2>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <!-- Cert 1 -->
+          <div class="cert-badge-card">
+            <div class="cert-icon-wrap"><i class="fas fa-database"></i></div>
+            <div>
+              <h3 style="font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 4px;">From Relational Model (SQL) to MongoDB's Document Model</h3>
+              <p style="font-size: 0.8rem; color: #34d399; font-family: 'JetBrains Mono', monospace; margin-bottom: 6px;">MongoDB University · Certified</p>
+              <p style="font-size: 0.85rem; color: var(--text-muted);">
+                Specialized accreditation in translating relational tables, foreign keys, and normal forms into high-performance NoSQL embedded and referenced document models.
+              </p>
+            </div>
+          </div>
+
+          <!-- Cert 2 -->
+          <div class="cert-badge-card">
+            <div class="cert-icon-wrap"><i class="fas fa-award"></i></div>
+            <div>
+              <h3 style="font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 4px;">MongoDB Schema Design Patterns &amp; Anti-patterns</h3>
+              <p style="font-size: 0.8rem; color: #34d399; font-family: 'JetBrains Mono', monospace; margin-bottom: 6px;">MongoDB Skill Badge · Verified</p>
+              <p style="font-size: 0.85rem; color: var(--text-muted);">
+                Demonstrated mastery in production schema optimization patterns (Subset, Bucket, Extended Reference) and avoiding anti-patterns like unbounded arrays.
+              </p>
+            </div>
+          </div>
+
+          <!-- Cert 3 -->
+          <div class="cert-badge-card" style="border-color: rgba(245, 158, 11, 0.3); background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(15, 23, 42, 0.9));">
+            <div class="cert-icon-wrap" style="color: #fbbf24; background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.4);"><i class="fab fa-aws"></i></div>
+            <div>
+              <h3 style="font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 4px;">AWS Cloud Core Architecture</h3>
+              <p style="font-size: 0.8rem; color: #fbbf24; font-family: 'JetBrains Mono', monospace; margin-bottom: 6px;">Amazon Web Services Practicum</p>
+              <p style="font-size: 0.85rem; color: var(--text-muted);">
+                Comprehensive hands-on implementation across EC2 Compute, S3 Storage, IAM Least-Privilege Security, and VPC Network Isolation.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- EDUCATION SECTION -->
+    <section id="education" class="section-wrap">
+      <div class="section-header">
+        <h2 class="section-title">
+          <div class="title-icon"><i class="fas fa-graduation-cap"></i></div>
+          Academic Background
+        </h2>
+        <span class="section-tagline">// EDUCATION_TIMELINE</span>
+      </div>
+
+      <div class="grid-4">
+        <!-- B.Sc. Data Science -->
+        <div class="tilt-card" style="border-color: var(--border-glow);">
+          <span style="font-size: 0.75rem; color: var(--cyan); font-family: 'JetBrains Mono', monospace; margin-bottom: 8px; display: block;">PURSUING (2025–2028)</span>
+          <h3 style="font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 4px;">B.Sc. Data Science</h3>
+          <p style="font-size: 0.9rem; color: #93c5fd; margin-bottom: 12px;">AAFT College, Film City, Noida</p>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            Specializing in Machine Learning algorithms, predictive analytics, statistical inference, big data modeling, and cloud computing.
+          </p>
+        </div>
+
+        <!-- B.Sc. Chemistry -->
+        <div class="tilt-card">
+          <span style="font-size: 0.75rem; color: #a855f7; font-family: 'JetBrains Mono', monospace; margin-bottom: 8px; display: block;">GRADUATED 2025</span>
+          <h3 style="font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 4px;">B.Sc. Chemistry</h3>
+          <p style="font-size: 0.9rem; color: #d8b4fe; margin-bottom: 12px;">MJPRU University, Bareilly</p>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            Built strong foundations in empirical experimental design, laboratory precision, hypothesis testing, and quantitative research.
+          </p>
+        </div>
+
+        <!-- Class XII -->
+        <div class="tilt-card">
+          <span style="font-size: 0.75rem; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; margin-bottom: 8px; display: block;">SENIOR SECONDARY</span>
+          <h3 style="font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 4px;">Class XII</h3>
+          <div style="font-size: 1.8rem; font-weight: 800; color: var(--cyan); font-family: 'JetBrains Mono', monospace; margin: 8px 0;">63%</div>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            Core focus on Physics, Chemistry, and Mathematics (PCM).
+          </p>
+        </div>
+
+        <!-- Class X -->
+        <div class="tilt-card">
+          <span style="font-size: 0.75rem; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; margin-bottom: 8px; display: block;">HIGH SCHOOL</span>
+          <h3 style="font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 4px;">Class X</h3>
+          <div style="font-size: 1.8rem; font-weight: 800; color: var(--cyan); font-family: 'JetBrains Mono', monospace; margin: 8px 0;">73%</div>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            Strong distinction in Science and Mathematical fundamentals.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <p style="margin-bottom: 8px;">
+        Designed &amp; Crafted for <strong>Sanskar Yadav</strong> • Interactive 3D WebGL Portfolio
+      </p>
+      <p style="color: var(--text-dim); font-size: 0.82rem;">
+        Noida, Sector 49, Uttar Pradesh • <a href="mailto:sanskaryadav287@gmail.com">sanskaryadav287@gmail.com</a> • +91 7906997240 • 
+        <a href="https://www.linkedin.com/in/sanskar-yadav-a1546538a/" target="_blank">LinkedIn</a> • 
+        <a href="https://github.com/sanskaryadav287" target="_blank">GitHub</a>
+      </p>
+    </footer>
+
+  </div>
+
+  <!-- FLOATING BOTTOM DOCK WITH DOWNLOAD LINKS -->
+  <div class="download-dock">
+    <div class="dock-title">
+      <i class="fas fa-download" style="color: var(--cyan);"></i> DOWNLOAD RESUME:
+    </div>
+    <a href="Sanskar_Yadav_Resume.pdf" download="Sanskar_Yadav_Resume.pdf" class="dock-btn pdf" onclick="playAudioTone(800)">
+      <i class="fas fa-file-pdf"></i> Download PDF
+    </a>
+    <a href="Sanskar_Yadav_Resume.docx" download="Sanskar_Yadav_Resume.docx" class="dock-btn docx" onclick="playAudioTone(850)">
+      <i class="fas fa-file-word"></i> Download Word (.docx)
+    </a>
+    <button class="dock-btn print" onclick="window.print(); playAudioTone(900);" title="Print / Save As PDF">
+      <i class="fas fa-print"></i> Print
+    </button>
+  </div>
+
+  <!-- JAVASCRIPT: 3D THREE.JS CANVAS & INTERACTIVE FX -->
+  <script>
+    /* =========================================================================
+       1. WEB AUDIO API SYNTHESIZER (Sci-Fi Sound FX)
+       ========================================================================= */
+    let audioCtx = null;
+    let audioEnabled = true;
+
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) {
+          audioCtx = new AudioContext();
+        }
+      }
+    }
+
+    function playAudioTone(freq = 440, type = 'sine', duration = 0.08) {
+      if (!audioEnabled) return;
+      try {
+        initAudio();
+        if (!audioCtx) return;
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        
+        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {
+        // Audio policy ignore
+      }
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      const btn = document.getElementById('sound-btn');
+      if (audioEnabled) {
+        btn.classList.add('active');
+        btn.innerHTML = '<i class="fas fa-volume-up"></i> Sound FX: ON';
+        playAudioTone(600);
+      } else {
+        btn.classList.remove('active');
+        btn.innerHTML = '<i class="fas fa-volume-mute"></i> Sound FX: OFF';
+      }
+    }
+
+    /* =========================================================================
+       2. THREE.JS 3D PARTICLE CONSTELLATION & WIREFRAME SCENE
+       ========================================================================= */
+    let scene, camera, renderer, particles, polyhedron, ring;
+    let mouseX = 0, mouseY = 0;
+    let targetX = 0, targetY = 0;
+    let isOrbiting = false;
+    let windowHalfX = window.innerWidth / 2;
+    let windowHalfY = window.innerHeight / 2;
+
+    function initThreeScene() {
+      const canvas = document.getElementById('webgl-canvas');
+      if (!window.THREE) {
+        initFallback2DCanvas(canvas);
+        return;
+      }
+
+      scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x07090e, 0.0012);
+
+      camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 2000);
+      camera.position.z = 700;
+
+      renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+      // Star & Data Point Particles
+      const particleCount = 1300;
+      const geometry = new THREE.BufferGeometry();
+      const positions = new Float32Array(particleCount * 3);
+      const colors = new Float32Array(particleCount * 3);
+
+      const color1 = new THREE.Color(0x00f2fe);
+      const color2 = new THREE.Color(0x38bdf8);
+      const color3 = new THREE.Color(0x6366f1);
+
+      for (let i = 0; i < particleCount; i++) {
+        positions[i * 3] = (Math.random() - 0.5) * 2200;
+        positions[i * 3 + 1] = (Math.random() - 0.5) * 2200;
+        positions[i * 3 + 2] = (Math.random() - 0.5) * 1500;
+
+        let mixedColor = color1.clone();
+        const r = Math.random();
+        if (r < 0.4) mixedColor = color1;
+        else if (r < 0.75) mixedColor = color2;
+        else mixedColor = color3;
+
+        colors[i * 3] = mixedColor.r;
+        colors[i * 3 + 1] = mixedColor.g;
+        colors[i * 3 + 2] = mixedColor.b;
+      }
+
+      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+      // Circular particle texture
+      const pCanvas = document.createElement('canvas');
+      pCanvas.width = 16;
+      pCanvas.height = 16;
+      const pCtx = pCanvas.getContext('2d');
+      const grad = pCtx.createRadialGradient(8, 8, 0, 8, 8, 8);
+      grad.addColorStop(0, 'rgba(255,255,255,1)');
+      grad.addColorStop(0.3, 'rgba(0,242,254,0.8)');
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+      pCtx.fillStyle = grad;
+      pCtx.fillRect(0, 0, 16, 16);
+      const pTexture = new THREE.CanvasTexture(pCanvas);
+
+      const pMaterial = new THREE.PointsMaterial({
+        size: 5,
+        map: pTexture,
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        vertexColors: true,
+        depthWrite: false
+      });
+
+      particles = new THREE.Points(geometry, pMaterial);
+      scene.add(particles);
+
+      // Wireframe Data Core
+      const polyGeo = new THREE.IcosahedronGeometry(130, 2);
+      const polyMat = new THREE.MeshBasicMaterial({
+        color: 0x00f2fe,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.18
+      });
+      polyhedron = new THREE.Mesh(polyGeo, polyMat);
+      polyhedron.position.set(380, 50, -100);
+      scene.add(polyhedron);
+
+      const ringGeo = new THREE.TorusGeometry(190, 1.5, 16, 100);
+      const ringMat = new THREE.MeshBasicMaterial({
+        color: 0x6366f1,
+        transparent: true,
+        opacity: 0.28
+      });
+      ring = new THREE.Mesh(ringGeo, ringMat);
+      ring.position.copy(polyhedron.position);
+      ring.rotation.x = Math.PI / 3;
+      scene.add(ring);
+
+      window.addEventListener('resize', onWindowResize);
+      document.addEventListener('mousemove', onDocumentMouseMove);
+      document.addEventListener('click', onDocumentClick);
+
+      animateThree();
+    }
+
+    function onWindowResize() {
+      windowHalfX = window.innerWidth / 2;
+      windowHalfY = window.innerHeight / 2;
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    function onDocumentMouseMove(event) {
+      mouseX = (event.clientX - windowHalfX) * 0.4;
+      mouseY = (event.clientY - windowHalfY) * 0.4;
+    }
+
+    function onDocumentClick(event) {
+      playAudioTone(700, 'sine', 0.05);
+      if (polyhedron) {
+        polyhedron.scale.set(1.15, 1.15, 1.15);
+        setTimeout(() => {
+          if (polyhedron) polyhedron.scale.set(1, 1, 1);
+        }, 200);
+      }
+    }
+
+    function toggle3DOrbit() {
+      isOrbiting = !isOrbiting;
+      const btn = document.getElementById('camera-btn');
+      if (isOrbiting) {
+        btn.classList.add('active');
+        btn.innerHTML = '<i class="fas fa-spin fa-cube"></i> Orbiting';
+      } else {
+        btn.classList.remove('active');
+        btn.innerHTML = '<i class="fas fa-cube"></i> 3D Mode';
+      }
+      playAudioTone(580);
+    }
+
+    let clock = 0;
+    function animateThree() {
+      requestAnimationFrame(animateThree);
+      clock += 0.01;
+
+      targetX = mouseX * 0.8;
+      targetY = mouseY * 0.8;
+
+      camera.position.x += (targetX - camera.position.x) * 0.04;
+      camera.position.y += (-targetY - camera.position.y) * 0.04;
+      camera.lookAt(scene.position);
+
+      if (particles) {
+        particles.rotation.y += 0.0006;
+        particles.rotation.x += 0.0003;
+      }
+
+      if (polyhedron) {
+        polyhedron.rotation.x += 0.005;
+        polyhedron.rotation.y += 0.008;
+        if (ring) {
+          ring.rotation.z += 0.006;
+          ring.rotation.y += 0.004;
+        }
+
+        if (isOrbiting) {
+          polyhedron.position.x = Math.sin(clock * 0.5) * 450;
+          polyhedron.position.z = Math.cos(clock * 0.5) * 200 - 50;
+          if (ring) ring.position.copy(polyhedron.position);
+        }
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    function initFallback2DCanvas(canvas) {
+      const ctx = canvas.getContext('2d');
+      let width = canvas.width = window.innerWidth;
+      let height = canvas.height = window.innerHeight;
+
+      const dots = [];
+      for (let i = 0; i < 90; i++) {
+        dots.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.8,
+          vy: (Math.random() - 0.5) * 0.8,
+          radius: Math.random() * 2 + 1
+        });
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, width, height);
+        ctx.fillStyle = '#07090e';
+        ctx.fillRect(0, 0, width, height);
+
+        for (let i = 0; i < dots.length; i++) {
+          let d = dots[i];
+          d.x += d.vx;
+          d.y += d.vy;
+          if (d.x < 0 || d.x > width) d.vx *= -1;
+          if (d.y < 0 || d.y > height) d.vy *= -1;
+
+          ctx.beginPath();
+          ctx.arc(d.x, d.y, d.radius, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(0, 242, 254, 0.7)';
+          ctx.fill();
+
+          for (let j = i + 1; j < dots.length; j++) {
+            let d2 = dots[j];
+            let dist = Math.hypot(d.x - d2.x, d.y - d2.y);
+            if (dist < 110) {
+              ctx.beginPath();
+              ctx.moveTo(d.x, d.y);
+              ctx.lineTo(d2.x, d2.y);
+              ctx.strokeStyle = `rgba(56, 189, 248, ${0.2 * (1 - dist / 110)})`;
+              ctx.stroke();
+            }
+          }
+        }
+        requestAnimationFrame(draw);
+      }
+      draw();
+    }
+
+    /* =========================================================================
+       3. 3D TILT EFFECT ON CARDS
+       ========================================================================= */
+    function init3DTiltCards() {
+      const cards = document.querySelectorAll('.tilt-card, .cloud-card, .cert-badge-card, #tilt-hero');
+      cards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+          const rotateX = ((y - centerY) / centerY) * -8;
+          const rotateY = ((x - centerX) / centerX) * 8;
+          card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+        });
+
+        card.addEventListener('mouseleave', () => {
+          card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+        });
+
+        card.addEventListener('mouseenter', () => {
+          playAudioTone(480, 'triangle', 0.03);
+        });
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initThreeScene();
+      init3DTiltCards();
+    });
+  </script>
+</body>
+</html>

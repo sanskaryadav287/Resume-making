@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sanskar Yadav - Resume</title>
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 10mm 12mm 10mm 12mm;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #1e293b;
+      background: #ffffff;
+      line-height: 1.4;
+      font-size: 9.2pt;
+      -webkit-font-smoothing: antialiased;
+    }
+    a {
+      color: #1d4ed8;
+      text-decoration: none;
+    }
+
+    /* HEADER WITH PROFILE PIC */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border-bottom: 2px solid #2563eb;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+    }
+    .profile-photo {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2.5px solid #2563eb;
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+      flex-shrink: 0;
+    }
+    .header-info {
+      flex: 1;
+    }
+    .name {
+      font-size: 21pt;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #0f172a;
+      text-transform: uppercase;
+      line-height: 1.1;
+    }
+    .headline {
+      font-size: 10pt;
+      font-weight: 700;
+      color: #2563eb;
+      margin-top: 3px;
+      letter-spacing: 0.3px;
+    }
+    .contact-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 6px;
+      font-size: 8.5pt;
+      color: #475569;
+    }
+    .contact-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* LAYOUT */
+    .container {
+      display: grid;
+      grid-template-columns: 1.85fr 1.15fr;
+      gap: 16px;
+    }
+
+    /* SECTIONS */
+    .section {
+      margin-bottom: 11px;
+    }
+    .section-title {
+      font-size: 9.8pt;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #0f172a;
+      border-bottom: 1.5px solid #e2e8f0;
+      padding-bottom: 3px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .section-title::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: #2563eb;
+      border-radius: 2px;
+    }
+
+    /* SUMMARY */
+    .summary-text {
+      font-size: 8.8pt;
+      color: #334155;
+      line-height: 1.45;
+      text-align: justify;
+    }
+
+    /* EXPERIENCE & PROJECTS */
+    .item {
+      margin-bottom: 8px;
+    }
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 2px;
+    }
+    .item-title {
+      font-size: 9.5pt;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .item-company {
+      font-weight: 600;
+      color: #2563eb;
+    }
+    .item-date {
+      font-size: 8.2pt;
+      font-weight: 600;
+      color: #64748b;
+    }
+    .item-tech {
+      font-size: 8.2pt;
+      font-style: italic;
+      color: #475569;
+      margin-bottom: 3px;
+    }
+    .bullets {
+      list-style-type: none;
+      padding-left: 0;
+    }
+    .bullets li {
+      position: relative;
+      padding-left: 12px;
+      margin-bottom: 2.5px;
+      font-size: 8.6pt;
+      color: #334155;
+      line-height: 1.35;
+    }
+    .bullets li::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: #2563eb;
+      font-weight: bold;
+      font-size: 11pt;
+      line-height: 0.9;
+    }
+    .bullets strong {
+      color: #0f172a;
+    }
+
+    /* SKILL BADGES */
+    .skill-group {
+      margin-bottom: 7px;
+    }
+    .skill-group-title {
+      font-size: 8.6pt;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 2px;
+    }
+    .skill-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3.5px;
+    }
+    .tag {
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      color: #1e293b;
+      padding: 1.5px 6px;
+      border-radius: 4px;
+      font-size: 7.8pt;
+      font-weight: 500;
+    }
+    .tag.highlight {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+      color: #1d4ed8;
+      font-weight: 600;
+    }
+
+    /* CERTIFICATIONS & EDUCATION */
+    .cert-item {
+      margin-bottom: 6px;
+    }
+    .cert-name {
+      font-size: 8.6pt;
+      font-weight: 700;
+      color: #0f172a;
+      line-height: 1.25;
+    }
+    .cert-issuer {
+      font-size: 7.8pt;
+      color: #64748b;
+    }
+
+    .edu-item {
+      margin-bottom: 6px;
+    }
+    .edu-degree {
+      font-size: 8.9pt;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    .edu-institution {
+      font-size: 8.2pt;
+      color: #2563eb;
+      font-weight: 600;
+    }
+    .edu-meta {
+      font-size: 7.8pt;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER WITH PHOTO -->
+  <header class="header">
+    <img src="profile_pic.jpeg" alt="Sanskar Yadav" class="profile-photo">
+    <div class="header-info">
+      <h1 class="name">Sanskar Yadav</h1>
+      <div class="headline">DATA SCIENCE STUDENT | PYTHON &amp; MACHINE LEARNING | AWS CLOUD PRACTITIONER</div>
+      <div class="contact-bar">
+        <span class="contact-item">📍 Noida, Sector 49, UP</span>
+        <span class="contact-item">📞 +91 7906997240</span>
+        <span class="contact-item">✉️ sanskaryadav287@gmail.com</span>
+      </div>
+      <div class="contact-bar" style="margin-top: 3px;">
+        <span class="contact-item">🔗 <a href="https://www.linkedin.com/in/sanskar-yadav-a1546538a/" target="_blank">linkedin.com/in/sanskar-yadav-a1546538a</a></span>
+        <span class="contact-item">💻 <a href="https://github.com/sanskaryadav287" target="_blank">github.com/sanskaryadav287</a></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- PROFESSIONAL SUMMARY -->
+  <section class="section">
+    <div class="section-title">Professional Summary</div>
+    <p class="summary-text">
+      Analytical and mathematically grounded Data Science student pursuing B.Sc. in Data Science at AAFT College, Noida, backed by a foundational B.Sc. in Chemistry (MJPRU Bareilly) that honed empirical rigor, hypothesis formulation, and quantitative discipline. Proficient in Python for predictive modeling, machine learning algorithms (Random Forest, XGBoost, Regression, Clustering), statistical inference, and exploratory data analysis. Holds specialized MongoDB certifications in document schema design and SQL-to-NoSQL migration. Hands-on experience in cloud architecture and data pipeline automation using Amazon EC2, S3, IAM, and VPC. Proven communicator and pedagogical leader from 3 years of academic mentoring and 6 months of client healthcare sales.
+    </p>
+  </section>
+
+  <!-- TWO COLUMN CONTAINER -->
+  <div class="container">
+
+    <!-- LEFT COLUMN: PROJECTS & EXPERIENCE -->
+    <div class="col-main">
+
+      <!-- PROJECTS -->
+      <section class="section">
+        <div class="section-title">Practical Data Science &amp; Cloud Projects</div>
+
+        <div class="item">
+          <div class="item-header">
+            <span class="item-title">Customer Churn ML Classification Pipeline</span>
+            <span class="item-date">2025</span>
+          </div>
+          <div class="item-tech">Python, Scikit-Learn, Pandas, NumPy, SMOTE, AWS S3</div>
+          <ul class="bullets">
+            <li>Engineered an end-to-end ML classification pipeline predicting client churn on 10,000+ customer records.</li>
+            <li>Conducted EDA, feature selection, and handled extreme class imbalance via SMOTE technique.</li>
+            <li>Tuned Random Forest &amp; XGBoost models, achieving <strong>87% ROC-AUC accuracy</strong> and evaluating F1-Score.</li>
+            <li>Automated serialized model storage and inference artifacts into <strong>Amazon S3</strong> buckets.</li>
+          </ul>
+        </div>
+
+        <div class="item">
+          <div class="item-header">
+            <span class="item-title">Healthcare Record NoSQL Document System</span>
+            <span class="item-date">2025</span>
+          </div>
+          <div class="item-tech">MongoDB, PyMongo, SQL-to-NoSQL Migration, Document Modeling</div>
+          <ul class="bullets">
+            <li>Migrated relational health schemas to high-throughput nested document models in MongoDB.</li>
+            <li>Applied official <strong>MongoDB Schema Design Patterns</strong> (Subset Pattern) eliminating join latency.</li>
+            <li>Constructed complex aggregation pipelines in PyMongo for diagnostic trends and workload metrics.</li>
+          </ul>
+        </div>
+
+        <div class="item">
+          <div class="item-header">
+            <span class="item-title">AWS Automated Cloud Data Infrastructure</span>
+            <span class="item-date">2025</span>
+          </div>
+          <div class="item-tech">Amazon EC2, Amazon S3, AWS IAM, Amazon VPC, Streamlit</div>
+          <ul class="bullets">
+            <li>Designed isolated <strong>Amazon VPC</strong> network with public/private subnets and route tables.</li>
+            <li>Deployed an <strong>EC2 Linux instance</strong> executing automated data ingestion and cleaning jobs.</li>
+            <li>Secured credentials using <strong>AWS IAM roles</strong> with least-privilege policies.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- EXPERIENCE -->
+      <section class="section">
+        <div class="section-title">Work Experience</div>
+
+        <div class="item">
+          <div class="item-header">
+            <span class="item-title">Sales Executive</span>
+            <span class="item-date">6 Months</span>
+          </div>
+          <div class="item-company">Swasthi Health Company</div>
+          <ul class="bullets">
+            <li>Drove client acquisition for wellness and healthcare services, consistently meeting targets.</li>
+            <li>Analyzed sales performance and customer feedback data to profile high-converting demographics.</li>
+            <li>Optimized CRM data logging and follow-ups, reducing customer response turnaround by 25%.</li>
+          </ul>
+        </div>
+
+        <div class="item">
+          <div class="item-header">
+            <span class="item-title">Private STEM &amp; Academic Tutor</span>
+            <span class="item-date">3 Years</span>
+          </div>
+          <div class="item-company">Self-Employed · Noida &amp; Bareilly</div>
+          <ul class="bullets">
+            <li>Tutored 50+ students in Mathematics, Science, and Analytical Logic, boosting scores by 20%.</li>
+            <li>Refined pedagogical communication, breaking down complex mathematical concepts into clear intuition.</li>
+          </ul>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- RIGHT COLUMN: EXTENSIVE SKILLS, AWS, CERTIFICATIONS, EDUCATION -->
+    <div class="col-side">
+
+      <!-- EXPANDED TECHNICAL SKILLS -->
+      <section class="section">
+        <div class="section-title">Comprehensive Skills</div>
+
+        <div class="skill-group">
+          <div class="skill-group-title">Programming &amp; Core</div>
+          <div class="skill-tags">
+            <span class="tag highlight">Python</span>
+            <span class="tag highlight">SQL (MySQL/Postgres)</span>
+            <span class="tag">R (Basics)</span>
+            <span class="tag">BSON/JSON</span>
+          </div>
+        </div>
+
+        <div class="skill-group">
+          <div class="skill-group-title">Machine Learning &amp; AI</div>
+          <div class="skill-tags">
+            <span class="tag highlight">Scikit-Learn</span>
+            <span class="tag highlight">Pandas</span>
+            <span class="tag highlight">NumPy</span>
+            <span class="tag">Random Forests</span>
+            <span class="tag">XGBoost</span>
+            <span class="tag">Logistic Reg.</span>
+            <span class="tag">K-Means</span>
+            <span class="tag">PCA</span>
+            <span class="tag">ANN Foundations</span>
+            <span class="tag">NLP (TF-IDF/Word2Vec)</span>
+            <span class="tag">Hyperparameter Tuning</span>
+          </div>
+        </div>
+
+        <div class="skill-group">
+          <div class="skill-group-title">Math &amp; Statistics</div>
+          <div class="skill-tags">
+            <span class="tag highlight">Hypothesis Testing</span>
+            <span class="tag">p-values &amp; t-tests</span>
+            <span class="tag">ANOVA</span>
+            <span class="tag">Probability Dist.</span>
+            <span class="tag">A/B Testing</span>
+            <span class="tag">Linear Algebra</span>
+          </div>
+        </div>
+
+        <div class="skill-group">
+          <div class="skill-group-title">Data Viz &amp; BI</div>
+          <div class="skill-tags">
+            <span class="tag highlight">Matplotlib</span>
+            <span class="tag highlight">Seaborn</span>
+            <span class="tag">Plotly</span>
+            <span class="tag">Power BI (Dashboards)</span>
+            <span class="tag">Streamlit</span>
+          </div>
+        </div>
+
+        <div class="skill-group">
+          <div class="skill-group-title">AWS Cloud Services</div>
+          <div class="skill-tags">
+            <span class="tag highlight">Amazon EC2</span>
+            <span class="tag highlight">Amazon S3</span>
+            <span class="tag highlight">AWS IAM</span>
+            <span class="tag highlight">Amazon VPC</span>
+          </div>
+        </div>
+
+        <div class="skill-group">
+          <div class="skill-group-title">Databases &amp; Tools</div>
+          <div class="skill-tags">
+            <span class="tag highlight">MongoDB</span>
+            <span class="tag">Git &amp; GitHub</span>
+            <span class="tag">Docker (Basics)</span>
+            <span class="tag">Jupyter</span>
+            <span class="tag">VS Code</span>
+            <span class="tag">Linux CLI</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- CERTIFICATIONS -->
+      <section class="section">
+        <div class="section-title">Certifications</div>
+
+        <div class="cert-item">
+          <div class="cert-name">Relational (SQL) to MongoDB Document Model</div>
+          <div class="cert-issuer">MongoDB University · Certified</div>
+        </div>
+
+        <div class="cert-item">
+          <div class="cert-name">MongoDB Schema Design Patterns &amp; Anti-patterns</div>
+          <div class="cert-issuer">MongoDB University Skill Badge</div>
+        </div>
+
+        <div class="cert-item">
+          <div class="cert-name">AWS Cloud Essentials (EC2, S3, IAM, VPC)</div>
+          <div class="cert-issuer">Cloud Architecture Practicum</div>
+        </div>
+
+        <div class="cert-item">
+          <div class="cert-name">Python for Data Science &amp; Machine Learning</div>
+          <div class="cert-issuer">Advanced Algorithms &amp; Statistics</div>
+        </div>
+      </section>
+
+      <!-- EDUCATION -->
+      <section class="section">
+        <div class="section-title">Education</div>
+
+        <div class="edu-item">
+          <div class="edu-degree">B.Sc. in Data Science</div>
+          <div class="edu-institution">AAFT College, Film City, Noida</div>
+          <div class="edu-meta">Pursuing (2025 – 2027/2028)</div>
+        </div>
+
+        <div class="edu-item">
+          <div class="edu-degree">B.Sc. in Chemistry</div>
+          <div class="edu-institution">MJPRU University, Bareilly</div>
+          <div class="edu-meta">Completed 2025 · Empirical Rigor</div>
+        </div>
+
+        <div class="edu-item">
+          <div class="edu-degree">Class XII (Senior Secondary)</div>
+          <div class="edu-institution">PCM Background · Score: <strong>63%</strong></div>
+        </div>
+
+        <div class="edu-item">
+          <div class="edu-degree">Class X (Secondary)</div>
+          <div class="edu-institution">Science &amp; Math · Score: <strong>73%</strong></div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+</body>
+</html>
